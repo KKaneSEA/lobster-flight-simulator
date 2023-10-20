@@ -1,38 +1,70 @@
-.App {
-  text-align: center;
+@import url("https://fonts.googleapis.com/css2?family=Fjalla+One&display=swap");
+
+@import url("https://fonts.googleapis.com/css2?family=Climate+Crisis&family=Sono:wght@300;400;500;800&display=swap");
+
+.game-Container {
+  display: grid;
+  grid-template-rows: 1fr 5fr;
+  background-color: #e1d3ce;
+  width: 100%;
+  height: 100vh;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
+.game-Header {
+  display: flex !important;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
+  align-self: center;
+  justify-self: center;
+  width: 50%;
+  font-family: "Sono", sans-serif;
+  font-weight: 500;
+  /* font-family: "Fjalla One", sans-serif;
+  font-size: 1.5rem; */
+
+  background-color: #e1d3ce;
 }
 
-.App-link {
-  color: #61dafb;
+.game-Header-Title {
+  font-family: "Fjalla One", sans-serif;
+  font-size: 2rem;
+
+  padding-top: 2.5rem;
+  color: #c81c11;
+  margin: 0;
+  pading: 0;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.game-Header-Timer {
+  display: flex;
+  align-self: flex-end;
+  padding-right: 1rem;
+}
+.game-Header-PanCount {
+  display: flex;
+  align-self: flex-end;
+  padding-right: 1rem;
+
+  transform: translateY(-12px);
+}
+
+.threeD-Container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  max-height: 100%;
+
+  max-width: 100%;
+  background-color: black;
+}
+
+.threeD-Portal {
+  display: flex;
+  justify-content: center;
+
+  width: 70%;
+  height: 90%;
+  background-color: black;
 }
