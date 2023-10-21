@@ -1,9 +1,12 @@
+import "./App.css";
+
 import {
   useMatcapTexture,
   useTexture,
   Center,
   Text3D,
   OrbitControls,
+  useGLTF,
   MeshPortalMaterial,
   CameraControls,
   Environment,
@@ -12,30 +15,43 @@ import * as THREE from "three";
 import { useFrame, useLoader } from "@react-three/fiber";
 import { useState, useEffect, useRef } from "react";
 import { easing } from "maath";
+import {
+  Debug,
+  RigidBody,
+  Physics,
+  CylinderCollider,
+  CuboidCollider,
+} from "@react-three/rapier";
+// import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 
 const torusGeometry = new THREE.TorusGeometry(1, 0.6, 16, 36);
 
 export default function Kitchen(props) {
   const [rotateY, setRotateY] = useState(0);
-  const [position1, setPosition1] = useState(0);
+  const [position1, setPosition1] = useState(-1.9);
   const sphere1 = useRef();
+
+  const [hovered, setHovered] = useState(false);
+
   // const sceneRotate = useRef();
   // sceneRotate.rotation.y = rotateY;
   // sceneRotate.rotation = { x: 0, y: 0, z: 0 };
 
   const map = useTexture("./maptexture1.jpg");
+  const lobster = useGLTF("./models/lobster.glb");
 
-  function handleButtonForward(evt) {
-    // setRotateY(rotateY + 0.02);
-    setPosition1(position1 + 0.2 / 2);
+  function handleButtonUp(evt) {
+    if (position1 <= -0.5) {
+      setPosition1(position1 + 0.22);
+    } else return;
 
-    // if (positionY < 3.9) {
-    //   setPositionY(positionY + 0.1);
-    // } else if (positionY > -3.9) {
-    //   setPositionY(positionY - 0.1);
-    // } else {
-    //   setPositionY(positionY - 0.1);
-    // }
+    console.log(position1);
+  }
+
+  function handleButtonDown(evt) {
+    if (position1 >= -3.3) {
+      setPosition1(position1 - 0.22);
+    } else return;
 
     console.log(position1);
   }
@@ -48,13 +64,18 @@ export default function Kitchen(props) {
   // );
 
   useFrame((state, delta) => {
-    sphere1.current.rotation.y -= delta * 0.5;
-    // sphere1.current.position.z += delta * 0.51;
+    sphere1.current.rotation.y -= delta * 0.35;
+
+    // sphere1.current.rotation.x -= delta * 0.005;
 
     // sphere1.current.rotation.z -= delta * 0.003;
 
     // sphere1.current.rotation.x += delta * 0.2;
   });
+
+  useEffect(() => {
+    document.body.style.cursor = hovered ? "pointer" : "auto";
+  }, [hovered]);
   return (
     <>
       {/* <mesh position={[0, 0, 0]}>
@@ -64,13 +85,28 @@ export default function Kitchen(props) {
           // blend={props.boolean1 ? 1 : 0}
         > */}
       <OrbitControls
-        minDistance={2}
-        maxDistance={10}
+        minDistance={5}
+        maxDistance={6}
         target={[-0.7, -0.8, -2.2]}
+        enablePan={false}
+        enableRotate={false}
       />
       <Environment preset="apartment" />
 
+      <Physics>
+        <RigidBody type="fixed">
+          <primitive
+            object={lobster.scene}
+            // position={[-3, -1, -7]}
+            position={[-1.5, position1, -5]}
+            rotation={[20.15, -80.05, 0.09]}
+            scale={0.5}
+          />
+        </RigidBody>
+      </Physics>
+
       <Text3D
+        className="upDownButton"
         font="./fonts/Inconsolata_Regular.json"
         size={0.3}
         height={0.1}
@@ -83,10 +119,12 @@ export default function Kitchen(props) {
         rotation-x={-0.1}
         rotation-y={0.1}
         rotation-z={0.03}
-        position={[0.5, -2.6, -5]}
+        position={[0.8, -2.6, -5]}
         onClick={(e) => {
-          handleButtonForward();
+          handleButtonUp();
         }}
+        onPointerOver={() => setHovered(true)}
+        onPointerOut={() => setHovered(false)}
       >
         {" "}
         UP
@@ -105,10 +143,12 @@ export default function Kitchen(props) {
         rotation-x={-0.1}
         rotation-y={0.1}
         rotation-z={0.03}
-        position={[0.5, -3, -5]}
+        position={[0.8, -3, -5]}
         onClick={(e) => {
-          handleButtonForward();
+          handleButtonDown();
         }}
+        onPointerOver={() => setHovered(true)}
+        onPointerOut={() => setHovered(false)}
       >
         {" "}
         DOWN

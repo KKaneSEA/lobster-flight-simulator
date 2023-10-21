@@ -8,6 +8,12 @@
   background-color: #e1d3ce;
   width: 100%;
   height: 100vh;
+
+  user-select: none; /* standard syntax */
+  -webkit-user-select: none; /* webkit (safari, chrome) browsers */
+  -moz-user-select: none; /* mozilla browsers */
+  -khtml-user-select: none; /* webkit (konqueror) browsers */
+  -ms-user-select: none;
 }
 
 .game-Header {
