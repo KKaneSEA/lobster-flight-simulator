@@ -76,15 +76,45 @@
 
   width: 70%;
   height: 90%;
-  background-color: black;
+  background-color: #e1d3ce;
 }
 
 .gameOver-Container {
   width: 50%;
+  height: 50%;
   background-color: #e1d3ce;
+
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-content: center;
 
   align-items: center;
+}
+
+.gameOver-Title {
+  color: black;
+  font-family: "Sono", sans-serif;
+  font-weight: 500;
+
+  font-size: 3rem;
+
+  margin: 0;
+  padding-bottom: 2rem;
+  padding-top: 5rem;
+}
+
+.gameOver-Button {
+  font-family: "Sono", sans-serif;
+  color: black;
+  font-weight: 500;
+
+  background-color: #c81c11;
+  /* border: none; */
+
+  padding: 2rem;
+  text-align: center;
+  /* text-decoration: none; */
+  display: inline-block;
+  font-size: 1.2rem;
 }

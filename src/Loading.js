@@ -9,10 +9,10 @@ export default function Loading() {
         anchorX="center"
         anchorY="middle"
         position={[0, 1, -9]}
-        color="white"
+        color="black"
         fontSize={0.5}
       >
-        loading...
+        LOADING...
       </Text>
     </>
   );
