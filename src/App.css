@@ -2,6 +2,11 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Climate+Crisis&family=Sono:wght@300;400;500;800&display=swap");
 
+.loading-Font {
+  font-size: 62.5%;
+  font-family: "Sono", sans-serif;
+  font-weight: 500;
+}
 .game-Container {
   display: grid;
   grid-template-rows: 1fr 5fr;
@@ -39,7 +44,6 @@
   padding-top: 2.5rem;
   color: #c81c11;
   margin: 0;
-  pading: 0;
 }
 
 .game-Header-Timer {
@@ -63,7 +67,7 @@
   max-height: 100%;
 
   max-width: 100%;
-  background-color: black;
+  background-color: #e1d3ce;
 }
 
 .threeD-Portal {
@@ -73,4 +77,14 @@
   width: 70%;
   height: 90%;
   background-color: black;
+}
+
+.gameOver-Container {
+  width: 50%;
+  background-color: #e1d3ce;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+
+  align-items: center;
 }

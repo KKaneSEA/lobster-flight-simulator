@@ -21,6 +21,7 @@ import {
   Physics,
   CylinderCollider,
   CuboidCollider,
+  BallCollider,
 } from "@react-three/rapier";
 // import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 
@@ -30,6 +31,8 @@ export default function Kitchen(props) {
   const [rotateY, setRotateY] = useState(0);
   const [position1, setPosition1] = useState(-1.9);
   const sphere1 = useRef();
+  const lobsterRef = useRef();
+  const box = useRef();
 
   const [hovered, setHovered] = useState(false);
 
@@ -76,6 +79,11 @@ export default function Kitchen(props) {
   useEffect(() => {
     document.body.style.cursor = hovered ? "pointer" : "auto";
   }, [hovered]);
+
+  const collisionEnter = () => {
+    console.log("enter collision");
+  };
+
   return (
     <>
       {/* <mesh position={[0, 0, 0]}>
@@ -88,20 +96,53 @@ export default function Kitchen(props) {
         minDistance={5}
         maxDistance={6}
         target={[-0.7, -0.8, -2.2]}
-        enablePan={false}
-        enableRotate={false}
+        // enablePan={false}
+        // enableRotate={false}
       />
       <Environment preset="apartment" />
+      <Physics debug>
+        <RigidBody
+          // canSleep={false}
+          type="fixed"
+          gravityScale={1}
+          // gravityScale={1}
+          // colliders="ball"
+          position={[-1.5, 0.6, -5]}
+          ref={box}
+          // onCollisionEnter={collisionEnter}
+        >
+          <CuboidCollider args={[0.5]} />
+          <mesh scale={0.7}>
+            <sphereGeometry />
+            <meshStandardMaterial color="#FFBFC3" />
+          </mesh>
+        </RigidBody>
 
-      <Physics>
-        <RigidBody type="fixed">
-          <primitive
-            object={lobster.scene}
-            // position={[-3, -1, -7]}
-            position={[-1.5, position1, -5]}
-            rotation={[20.15, -80.05, 0.09]}
-            scale={0.5}
+        <RigidBody
+          // canSleep={false}
+          type="fixed"
+          // type="kinematicPosition"
+          ref={lobsterRef}
+          // gravityScale={1}
+          // colliders={false}
+          onCollisionEnter={collisionEnter}
+          position={[-1.5, position1, -5]}
+          rotation={[20.15, -80.05, 0.09]}
+          // scale={0.9}
+        >
+          <CylinderCollider
+            position={[0.38, 0.2, 0.5]}
+            args={[1, 0.79]}
+            rotation={[-8, -79.2, 28.5]}
           />
+          <mesh>
+            <primitive
+              object={lobster.scene}
+              // position={[-1.5, position1, -5]}
+              // rotation={[20.15, -80.05, 0.09]}
+              scale={0.5}
+            />
+          </mesh>
         </RigidBody>
       </Physics>
 
