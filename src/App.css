@@ -46,6 +46,10 @@
   margin: 0;
 }
 
+.game-Header-P {
+  padding-top: 0.5rem;
+}
+
 .game-Header-Timer {
   display: flex;
   align-self: flex-end;

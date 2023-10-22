@@ -10,10 +10,13 @@ import {
   MeshPortalMaterial,
   CameraControls,
   Environment,
+  KeyboardControls,
+  useKeyboardControls,
+  useAnimations,
 } from "@react-three/drei";
 import * as THREE from "three";
 import { useFrame, useLoader } from "@react-three/fiber";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { easing } from "maath";
 import {
   Debug,
@@ -22,34 +25,72 @@ import {
   CylinderCollider,
   CuboidCollider,
   BallCollider,
+  RapierRigidBody,
+  useRapier,
 } from "@react-three/rapier";
-// import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
-
-const torusGeometry = new THREE.TorusGeometry(1, 0.6, 16, 36);
 
 export default function Kitchen(props) {
+  const { rapier, world } = useRapier();
   const [rotateY, setRotateY] = useState(0);
   const [position1, setPosition1] = useState(-1.9);
   const sphere1 = useRef();
-  const lobsterRef = useRef();
+
   const box = useRef();
+  const rigidBody = useRef();
 
   const [hovered, setHovered] = useState(false);
 
-  // const sceneRotate = useRef();
-  // sceneRotate.rotation.y = rotateY;
-  // sceneRotate.rotation = { x: 0, y: 0, z: 0 };
-
   const map = useTexture("./maptexture1.jpg");
   const lobster = useGLTF("./models/lobster.glb");
+  const stockpot = useGLTF("./models/stockpot.glb");
+  const stockpotsRef = useRef();
+  console.log(stockpot);
 
-  function handleButtonUp(evt) {
-    if (position1 <= -0.5) {
-      setPosition1(position1 + 0.22);
-    } else return;
+  const animations = useAnimations(stockpot.animations, stockpot.scene);
 
-    console.log(position1);
-  }
+  const lobsterRef = useRef();
+  const [subscribeKeys, getKeys] = useKeyboardControls();
+
+  // function handleButtonUp(evt) {
+  //   if (position1 <= -0.5) {
+  //     // setPosition1(position1 + 0.22);
+  //     rigidBody.current.applyImpulse({ x: 0, y: 5, z: 0 });
+  //   } else return;
+
+  //   console.log(position1);
+  // }
+
+  useEffect(() => {
+    const action1 = animations.actions.stockpot1Action;
+    action1.play();
+
+    const action2 = animations.actions.stockpot2Action;
+    action2.play();
+
+    const action3 = animations.actions.stockpot3Action;
+    action3.play();
+
+    const action4 = animations.actions.stockpot4Action;
+    action4.play();
+
+    const action5 = animations.actions.stockpot5Action;
+    action5.play();
+  }, []);
+
+  const handleButtonUp = () => {
+    // lobsterRef.current.applyImpulse({ x: 0, y: 5, z: 0 });
+    // console.log("jump");
+    console.log("buttonup");
+    const mass = lobsterRef.current.mass();
+    console.log(mass);
+    console.log(lobsterRef.current);
+    lobsterRef.current.applyImpulse({ x: -2, y: 5, z: 0 });
+    lobsterRef.current.applyTorqueImpulse({
+      x: Math.random() - 0.5,
+      y: 1,
+      z: 0,
+    });
+  };
 
   function handleButtonDown(evt) {
     if (position1 >= -3.3) {
@@ -59,39 +100,60 @@ export default function Kitchen(props) {
     console.log(position1);
   }
 
-  // const normalMap = useTexture("./textures/texture3.jpg");
-
-  // const portal = useRef();
-  // useFrame((state, dt) =>
-  //   easing.damp(portal.current, "blend", props.view1 ? 1 : 0, 0.05, dt)
-  // );
-
   useFrame((state, delta) => {
     sphere1.current.rotation.y -= delta * 0.35;
-
-    // sphere1.current.rotation.x -= delta * 0.005;
-
-    // sphere1.current.rotation.z -= delta * 0.003;
-
-    // sphere1.current.rotation.x += delta * 0.2;
+    stockpotsRef.current.rotation.y += delta * 0.2;
   });
 
   useEffect(() => {
     document.body.style.cursor = hovered ? "pointer" : "auto";
   }, [hovered]);
 
+  // useEffect(() => {
+  //   if (rigidBody.current) {
+  //     // A one-off "push"
+  //     rigidBody.current.applyImpulse({ x: 0, y: 1, z: 0 }, true);
+  //     console.log("here");
+
+  //     // // A continuous force
+  //     // rigidBody.current.addForce({ x: 0, y: 10, z: 0 }, true);
+
+  //     // // A one-off torque rotation
+  //     // rigidBody.current.applyTorqueImpulse({ x: 0, y: 10, z: 0 }, true);
+
+  //     // // A continuous torque
+  //     // rigidBody.current.addTorque({ x: 0, y: 10, z: 0 }, true);
+  //   }
+  // }, [position1]);
+
   const collisionEnter = () => {
     console.log("enter collision");
   };
 
+  // useFrame((state, delta) => {
+  //   const { forward, backward } = getKeys();
+
+  //   const impulse = { x: 0.001, y: 0, z: 0 };
+  //   const torque = { x: 0, y: 0, z: 0 };
+
+  //   const impulseStrength = 0.6 * delta;
+  //   const torqueStrength = 0.6 * delta;
+
+  //   if (forward) {
+  //     impulse.z -= impulseStrength;
+  //   }
+
+  //   if (backward) {
+  //     impulse.z += impulseStrength;
+  //     torque.x += torqueStrength;
+  //   }
+
+  //   lobsterRef.current.applyImpulse(impulse);
+  //   lobsterRef.current.applyTorqueImpulse(torque);
+  // });
+
   return (
     <>
-      {/* <mesh position={[0, 0, 0]}>
-        <planeGeometry args={[3, 6]} />
-        <MeshPortalMaterial
-          ref={portal}
-          // blend={props.boolean1 ? 1 : 0}
-        > */}
       <OrbitControls
         minDistance={5}
         maxDistance={6}
@@ -100,51 +162,68 @@ export default function Kitchen(props) {
         // enableRotate={false}
       />
       <Environment preset="apartment" />
-      <Physics debug>
-        <RigidBody
-          // canSleep={false}
-          type="fixed"
-          gravityScale={1}
-          // gravityScale={1}
-          // colliders="ball"
-          position={[-1.5, 0.6, -5]}
-          ref={box}
-          // onCollisionEnter={collisionEnter}
-        >
-          <CuboidCollider args={[0.5]} />
-          <mesh scale={0.7}>
+      {/* <Physics debug> */}
+      <RigidBody
+        // canSleep={false}
+        type="fixed"
+        gravityScale={1}
+        restitution={0}
+        friction={0.7}
+        // gravityScale={1}
+        colliders="trimesh"
+        position={[-18.05, -2.5, -13.8]}
+        ref={stockpotsRef}
+        // ref={stockpotsRef}
+
+        // onCollisionEnter={collisionEnter}
+      >
+        {/* <CuboidCollider args={[2, 1]} position={[-0.5, 4, -1]} /> */}
+
+        <primitive
+          // ref={stockpotsRef}
+          object={stockpot.scene}
+          // position={[-0.5, -1.7, -1]}
+          // rotation={[20.15, -80.05, 0.09]}
+          scale={0.3}
+        />
+
+        {/* <mesh scale={0.7}>
             <sphereGeometry />
             <meshStandardMaterial color="#FFBFC3" />
-          </mesh>
-        </RigidBody>
+          </mesh> */}
+      </RigidBody>
 
-        <RigidBody
-          // canSleep={false}
-          type="fixed"
-          // type="kinematicPosition"
-          ref={lobsterRef}
-          // gravityScale={1}
-          // colliders={false}
-          onCollisionEnter={collisionEnter}
-          position={[-1.5, position1, -5]}
-          rotation={[20.15, -80.05, 0.09]}
-          // scale={0.9}
-        >
-          <CylinderCollider
-            position={[0.38, 0.2, 0.5]}
-            args={[1, 0.79]}
-            rotation={[-8, -79.2, 28.5]}
-          />
-          <mesh>
-            <primitive
-              object={lobster.scene}
-              // position={[-1.5, position1, -5]}
-              // rotation={[20.15, -80.05, 0.09]}
-              scale={0.5}
-            />
-          </mesh>
-        </RigidBody>
-      </Physics>
+      <RigidBody
+        ref={lobsterRef}
+        canSleep={false}
+        // type="fixed"
+        type="kinematicPosition"
+        // ref={lobsterRef}
+
+        restitution={0.2}
+        friction={1}
+        // gravityScale={1}
+
+        onCollisionEnter={collisionEnter}
+        position={[-1.5, -1.9, -5]}
+        rotation={[20.15, -80.05, 0.09]}
+        // scale={0.9}
+      >
+        <CylinderCollider
+          position={[0.38, 0.2, 0.5]}
+          args={[1, 0.79]}
+          rotation={[-8, -79.2, 28.5]}
+        />
+        {/* <mesh> */}
+        <primitive
+          object={lobster.scene}
+          // position={[-1.5, position1, -5]}
+          // rotation={[20.15, -80.05, 0.09]}
+          scale={0.5}
+        />
+        {/* </mesh> */}
+      </RigidBody>
+      {/* </Physics> */}
 
       <Text3D
         className="upDownButton"
@@ -191,35 +270,15 @@ export default function Kitchen(props) {
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
       >
-        {" "}
         DOWN
         <meshStandardMaterial metalness={0.2} roughness={0} color={"black"} />
       </Text3D>
 
-      <mesh
-        position={[position1, 0, position1]}
-        rotation={[0, 0, 0]}
-        ref={sphere1}
-        // onClick={(evt) => {
-        //   props.setView1(!props.view1);
-
-        //   evt.stopPropagation();
-        // }}
-      >
-        <sphereGeometry
-          // position={[1, 1.6, 1]}
-          // ref={sphere1}
-          args={[10, 64, 64]}
-        />
-        <meshStandardMaterial
-          map={map}
-          // normalMap={normalMap}
-          side={THREE.BackSide}
-        />
+      <mesh position={[-1.9, 0, -1.9]} rotation={[0, 0, 0]} ref={sphere1}>
+        <sphereGeometry args={[80, 64, 64]} />
+        <meshStandardMaterial map={map} side={THREE.BackSide} />
       </mesh>
-
-      {/* </MeshPortalMaterial>
-      </mesh> */}
+      {/* </Physics> */}
     </>
   );
 }
