@@ -35,6 +35,10 @@
   font-size: 1.5rem; */
 
   background-color: #e1d3ce;
+
+  @media only screen and (max-width: 57.5em) {
+    width: 100%;
+  }
 }
 
 .game-Header-Title {
@@ -72,6 +76,10 @@
 
   max-width: 100%;
   background-color: #e1d3ce;
+
+  @media only screen and (max-width: 67.5em) {
+    align-items: start;
+  }
 }
 
 .threeD-Portal {
@@ -81,6 +89,15 @@
   width: 70%;
   height: 90%;
   background-color: #e1d3ce;
+
+  @media only screen and (max-width: 67.5em) {
+    height: 50%;
+    width: 90%;
+    @media only screen and (max-width: 57.5em) {
+      height: 39%;
+      width: 90%;
+    }
+  }
 }
 
 .gameOver-Container {

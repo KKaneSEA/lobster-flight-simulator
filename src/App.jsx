@@ -7,7 +7,11 @@ import { Suspense, useRef } from "react";
 import Loading from "./Loading";
 import { Canvas } from "@react-three/fiber";
 import { useFrame } from "@react-three/fiber";
-import { Environment, KeyboardControls } from "@react-three/drei";
+import {
+  Environment,
+  KeyboardControls,
+  useKeyboardControls,
+} from "@react-three/drei";
 import {
   Debug,
   RigidBody,
@@ -22,6 +26,23 @@ import {
 function App() {
   const [view1, setView1] = useState(false);
   const [panCount, setPanCount] = useState(0);
+  const [position1, setPosition1] = useState(-1.9);
+
+  const handleButtonUp = (state) => {
+    console.log("buttonup");
+
+    if (position1 <= -0.5) {
+      setPosition1(position1 + 0.22);
+    }
+  };
+
+  function handleButtonDown(evt) {
+    if (position1 >= -3.3) {
+      setPosition1(position1 - 0.22);
+    } else return;
+
+    console.log(position1);
+  }
 
   return (
     <div className="game-Container">
@@ -75,7 +96,13 @@ function App() {
                     intensity={0.5}
                   />
                   <Physics debug>
-                    <Kitchen view1={view1} setView1={setView1} />
+                    <Kitchen
+                      position1={position1}
+                      view1={view1}
+                      setView1={setView1}
+                      handleButtonUp={handleButtonUp}
+                      handleButtonDown={handleButtonDown}
+                    />
                   </Physics>
                 </Suspense>
               </Canvas>

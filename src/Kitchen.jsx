@@ -37,7 +37,7 @@ export default function Kitchen(props) {
   const stockpotsRef = useRef();
   const { rapier, world } = useRapier();
   const [rotateY, setRotateY] = useState(0);
-  const [position1, setPosition1] = useState(-1.9);
+  // const [position1, setPosition1] = useState(-1.9);
   const sphere1 = useRef();
 
   const box = useRef();
@@ -55,21 +55,12 @@ export default function Kitchen(props) {
 
   const [subscribeKeys, getKeys] = useKeyboardControls();
 
-  const handleButtonUp = (state) => {
-    console.log("buttonup");
-    console.log(lobsterRef.current);
-    if (position1 <= -0.5) {
-      setPosition1(position1 + 0.22);
-    }
-  };
+  useFrame(() => {
+    const { forward, backward } = getKeys();
 
-  function handleButtonDown(evt) {
-    if (position1 >= -3.3) {
-      setPosition1(position1 - 0.22);
-    } else return;
-
-    console.log(position1);
-  }
+    if (forward === true) props.handleButtonUp();
+    if (backward === true) props.handleButtonDown();
+  });
 
   useFrame((state, delta) => {
     sphere1.current.rotation.y -= delta * 0.35;
@@ -118,7 +109,7 @@ export default function Kitchen(props) {
           canSleep={false}
           type="fixed"
           ref={lobsterRef}
-          position={[-1.5, position1, -5]}
+          position={[-1.5, props.position1, -5]}
           rotation={[20.15, -80.05, 0.09]}
           // scale={0.9}
         >
@@ -153,7 +144,7 @@ export default function Kitchen(props) {
           rotation-z={0.03}
           position={[0.8, -2.6, -5]}
           onClick={(e) => {
-            handleButtonUp();
+            props.handleButtonUp();
           }}
           onPointerOver={() => setHovered(true)}
           onPointerOut={() => setHovered(false)}
@@ -177,7 +168,7 @@ export default function Kitchen(props) {
           rotation-z={0.03}
           position={[0.8, -3, -5]}
           onClick={(e) => {
-            handleButtonDown();
+            props.handleButtonDown();
           }}
           onPointerOver={() => setHovered(true)}
           onPointerOut={() => setHovered(false)}
