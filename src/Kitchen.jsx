@@ -72,9 +72,8 @@ export default function Kitchen(props) {
   }, [hovered]);
 
   const lobsterJump = () => {
-    const lobsterImpulse = lobsterRef.current.__proto__;
     lobsterRef.current.applyImpulse({ x: 0.0, y: 20.0, z: 0.0 }, false);
-    console.log("cubbbeee jumpp");
+
     console.log(lobsterRef.current);
   };
 
