@@ -49,12 +49,10 @@ function App() {
       <header className="game-Header">
         <h1 className="game-Header-Title">LOBSTER FLIGHT SIMULATOR</h1>
         {/* <div className="game-Header-Info"> */}
-        {/* <div className="game-Header-P"> HIT 5 STOCK POTS AND YOU'RE OUT!</div> */}
-        <div className="game-Header-P"> WATCH OUT FOR THE STOCK POTS!</div>
+        <div className="game-Header-P"> HIT 5 STOCK POTS AND YOU'RE OUT!</div>
+        {/* <div className="game-Header-P"> WATCH OUT FOR THE STOCK POTS!</div> */}
         <p className="game-Header-Timer"></p>
-        <div className="game-Header-PanCount">
-          {/* STOCK POT COUNT: {panCount} */}
-        </div>
+        <div className="game-Header-PanCount">STOCK POT COUNT: {panCount}</div>
 
         {/* </div> */}
       </header>

@@ -35,6 +35,7 @@ import {
 export default function Kitchen(props) {
   const lobsterRef = useRef();
   const stockpotsRef = useRef();
+  const stockpotsRef2 = useRef();
   const { rapier, world } = useRapier();
   const [rotateY, setRotateY] = useState(0);
   // const [position1, setPosition1] = useState(-1.9);
@@ -49,8 +50,6 @@ export default function Kitchen(props) {
   const lobster = useGLTF("./models/lobster.glb");
   const stockpot = useGLTF("./models/stockpot.glb");
 
-  console.log(stockpot);
-
   const animations = useAnimations(stockpot.animations, stockpot.scene);
 
   const [subscribeKeys, getKeys] = useKeyboardControls();
@@ -64,12 +63,20 @@ export default function Kitchen(props) {
 
   useFrame((state, delta) => {
     sphere1.current.rotation.y -= delta * 0.35;
-    stockpotsRef.current.rotation.y += delta * 0.2;
+    stockpotsRef.current.rotation.y += delta * 0.22;
+    stockpotsRef.current.rotation.y += delta * 0.22;
   });
 
   useEffect(() => {
     document.body.style.cursor = hovered ? "pointer" : "auto";
   }, [hovered]);
+
+  const lobsterJump = () => {
+    const lobsterImpulse = lobsterRef.current.__proto__;
+    lobsterRef.current.applyImpulse({ x: 0.0, y: 20.0, z: 0.0 }, false);
+    console.log("cubbbeee jumpp");
+    console.log(lobsterRef.current);
+  };
 
   const collisionEnter = () => {
     console.log("enter collision");
@@ -86,15 +93,16 @@ export default function Kitchen(props) {
       />
       <Environment preset="apartment" />
 
-      <Physics>
+      <Physics debug>
         <RigidBody
-          key={"1a"}
+          key={"1b"}
           type="fixed"
           gravityScale={1}
           restitution={0}
           friction={0.7}
           colliders="trimesh"
-          position={[-18.05, -2.5, -13.8]}
+          // position={[19.05, -5, 10.8]}
+          // ref={stockpotsRef}
         >
           <primitive
             ref={stockpotsRef}
@@ -104,24 +112,44 @@ export default function Kitchen(props) {
             scale={0.3}
           />
         </RigidBody>
+        <RigidBody
+          key={"1a"}
+          type="fixed"
+          gravityScale={1}
+          ref={stockpotsRef2}
+          restitution={0}
+          friction={0.7}
+          position={[7.05, -2, 15.8]}
+        >
+          <primitive
+            // ref={stockpotsRef2}
+            object={stockpot.scene}
+            // position={[-0.5, -1.7, -1]}
+            // rotation={[20.15, -80.05, 0.09]}
+
+            scale={0.3}
+          />
+        </RigidBody>
 
         <RigidBody
-          canSleep={false}
+          // canSleep={false}
           type="fixed"
-          ref={lobsterRef}
-          position={[-1.5, props.position1, -5]}
+          position={[-1.5, -1.9, -5]}
           rotation={[20.15, -80.05, 0.09]}
+          ref={lobsterRef}
+
           // scale={0.9}
         >
-          {/* <CylinderCollider
+          <CylinderCollider
             position={[0.38, 0.2, 0.5]}
             args={[1, 0.79]}
             rotation={[-8, -79.2, 28.5]}
-          /> */}
+          />
 
           <primitive
-            ref={lobsterRef}
+            // ref={lobsterRef}
             object={lobster.scene}
+            onClick={lobsterJump}
             // position={[-1.5, position1, -5]}
             // rotation={[20.15, -80.05, 0.09]}
             scale={0.5}
@@ -143,9 +171,10 @@ export default function Kitchen(props) {
           rotation-y={0.1}
           rotation-z={0.03}
           position={[0.8, -2.6, -5]}
-          onClick={(e) => {
-            props.handleButtonUp();
-          }}
+          // onClick={(e) => {
+          //   props.handleButtonUp();
+          // }}
+          onClick={lobsterJump}
           onPointerOver={() => setHovered(true)}
           onPointerOut={() => setHovered(false)}
         >
