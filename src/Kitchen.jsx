@@ -42,6 +42,7 @@ export default function Kitchen(props) {
   const sphere1 = useRef();
 
   const box = useRef();
+  const [stateUp, setStateUp] = useState(false);
   const rigidBody = useRef < RapierRigidBody > null;
 
   const [hovered, setHovered] = useState(false);
@@ -57,8 +58,11 @@ export default function Kitchen(props) {
   useFrame(() => {
     const { forward, backward } = getKeys();
 
-    if (forward === true) props.handleButtonUp();
-    if (backward === true) props.handleButtonDown();
+    // if (forward === true) props.handleButtonUp();
+    // if (backward === true) props.handleButtonDown();
+
+    if (forward === true) lobsterJump();
+    if (backward === true) lobsterDuck();
   });
 
   useFrame((state, delta) => {
@@ -71,11 +75,43 @@ export default function Kitchen(props) {
     document.body.style.cursor = hovered ? "pointer" : "auto";
   }, [hovered]);
 
+  useEffect(() => {
+    const lobsterPosition = lobsterRef.current.translation();
+    console.log(lobsterPosition.y);
+    if (lobsterPosition.y >= 0.2) {
+      lobsterRef.current.resetForces(true);
+    }
+  }, [lobsterRef.current]);
+
   const lobsterJump = () => {
-    lobsterRef.current.applyImpulse({ x: 0.0, y: 20.0, z: 0.0 }, false);
+    const mass = lobsterRef.current.mass();
+    const lobsterPosition = lobsterRef.current.translation();
+    console.log(lobsterPosition.y);
+    if (lobsterPosition.y >= -2.5 || lobsterPosition.y <= 0.2) {
+      lobsterRef.current.applyImpulse({ x: 0, y: 0.05 * mass, z: 0 }, false);
+    } else
+      lobsterRef.current.applyImpulse({ x: 0, y: 0, z: 0 }, false) &&
+        lobsterRef.current.resetForces(true);
 
     console.log(lobsterRef.current);
   };
+
+  const lobsterDuck = (evt) => {
+    const mass = lobsterRef.current.mass();
+    const lobsterPosition = lobsterRef.current.translation();
+    if (lobsterPosition.y >= -2.5 || lobsterPosition.y <= 0.2) {
+      lobsterRef.current.applyImpulse({ x: 0, y: -0.05 * mass, z: 0 }, false);
+    } else
+      lobsterRef.current.applyImpulse({ x: 0, y: 0, z: 0 }, false) &&
+        lobsterRef.current.resetForces(true);
+    console.log(lobsterPosition.y);
+    console.log(lobsterRef.current);
+  };
+
+  function toggleDirection() {
+    setStateUp(true);
+    setStateUp(false);
+  }
 
   const collisionEnter = () => {
     console.log("enter collision");
@@ -131,8 +167,9 @@ export default function Kitchen(props) {
         </RigidBody>
 
         <RigidBody
-          // canSleep={false}
-          type="fixed"
+          canSleep={false}
+          gravityScale={0}
+          type="dynamic"
           position={[-1.5, -1.9, -5]}
           rotation={[20.15, -80.05, 0.09]}
           ref={lobsterRef}
@@ -143,12 +180,13 @@ export default function Kitchen(props) {
             position={[0.38, 0.2, 0.5]}
             args={[1, 0.79]}
             rotation={[-8, -79.2, 28.5]}
+            mass={1}
           />
 
           <primitive
             // ref={lobsterRef}
             object={lobster.scene}
-            onClick={lobsterJump}
+            onClick={toggleDirection}
             // position={[-1.5, position1, -5]}
             // rotation={[20.15, -80.05, 0.09]}
             scale={0.5}
@@ -195,9 +233,7 @@ export default function Kitchen(props) {
           rotation-y={0.1}
           rotation-z={0.03}
           position={[0.8, -3, -5]}
-          onClick={(e) => {
-            props.handleButtonDown();
-          }}
+          onClick={lobsterDuck}
           onPointerOver={() => setHovered(true)}
           onPointerOut={() => setHovered(false)}
         >
