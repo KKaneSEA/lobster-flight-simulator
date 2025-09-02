@@ -36,6 +36,7 @@ export default function Kitchen(props) {
   const lobsterRef = useRef();
   const stockpotsRef = useRef();
   const stockpotsRef2 = useRef();
+  const stockpotsRef3 = useRef();
   const { rapier, world } = useRapier();
   const [rotateY, setRotateY] = useState(0);
   // const [position1, setPosition1] = useState(-1.9);
@@ -71,12 +72,41 @@ export default function Kitchen(props) {
     stockpotsRef.current.rotation.y += delta * 0.22;
   });
 
+  // useFrame((state, delta) => {
+  //   if (stockpotsRef.current) {
+  //     stockpotsRef.current.setAngvel({ x: 0, y: 1, z: 0 }, true);
+  //   }
+  // });
+
+  useFrame((state, delta) => {
+    if (!stockpotsRef.current) return;
+
+    // target spin speed (rad/sec) → same as your old 0.22
+    const targetSpeed = 0.32;
+
+    // how quickly it accelerates toward target (higher = faster)
+    const acceleration = 1.0;
+
+    // get the current angular velocity
+    const current = stockpotsRef.current.angvel();
+
+    // smooth step toward target on y-axis
+    const newY = THREE.MathUtils.lerp(
+      current.y,
+      targetSpeed,
+      1 - Math.exp(-acceleration * delta)
+    );
+
+    stockpotsRef.current.setAngvel({ x: 0, y: newY, z: 0 }, true);
+  });
+
   useEffect(() => {
     document.body.style.cursor = hovered ? "pointer" : "auto";
   }, [hovered]);
 
   useEffect(() => {
     const lobsterPosition = lobsterRef.current.translation();
+
     console.log(lobsterPosition.y);
     if (lobsterPosition.y >= 0.2) {
       lobsterRef.current.resetForces(true);
@@ -88,7 +118,7 @@ export default function Kitchen(props) {
     const lobsterPosition = lobsterRef.current.translation();
     console.log(lobsterPosition.y);
     if (lobsterPosition.y >= -2.5 || lobsterPosition.y <= 0.2) {
-      lobsterRef.current.applyImpulse({ x: 0, y: 0.05 * mass, z: 0 }, false);
+      lobsterRef.current.applyImpulse({ x: 0, y: 0.09 * mass, z: 0 }, false);
     } else
       lobsterRef.current.applyImpulse({ x: 0, y: 0, z: 0 }, false) &&
         lobsterRef.current.resetForces(true);
@@ -106,6 +136,7 @@ export default function Kitchen(props) {
         lobsterRef.current.resetForces(true);
     console.log(lobsterPosition.y);
     console.log(lobsterRef.current);
+    console.log(stockpotsRef.current);
   };
 
   function toggleDirection() {
@@ -115,6 +146,7 @@ export default function Kitchen(props) {
 
   const collisionEnter = () => {
     console.log("enter collision");
+    props.setPanCount(1);
   };
 
   return (
@@ -128,26 +160,30 @@ export default function Kitchen(props) {
       />
       <Environment preset="apartment" />
 
-      <Physics debug>
+      <Physics>
         <RigidBody
           key={"1b"}
-          type="fixed"
-          gravityScale={1}
+          type="dynamic"
+          gravityScale={0}
           restitution={0}
           friction={0.7}
+          canSleep={false}
           colliders="trimesh"
-          // position={[19.05, -5, 10.8]}
-          // ref={stockpotsRef}
+          // type="kinematicPosition"
+          ref={stockpotsRef}
+          position={[9.25, -2, 9.8]}
         >
+          {/* <CuboidCollider args={[0.3, 0.3, 0.3]} /> */}
           <primitive
-            ref={stockpotsRef}
+            // ref={stockpotsRef}
+            // ref={box}
             object={stockpot.scene}
             // position={[-0.5, -1.7, -1]}
             // rotation={[20.15, -80.05, 0.09]}
             scale={0.3}
           />
         </RigidBody>
-        <RigidBody
+        {/* <RigidBody
           key={"1a"}
           type="fixed"
           gravityScale={1}
@@ -164,7 +200,7 @@ export default function Kitchen(props) {
 
             scale={0.3}
           />
-        </RigidBody>
+        </RigidBody> */}
 
         <RigidBody
           canSleep={false}
@@ -173,6 +209,7 @@ export default function Kitchen(props) {
           position={[-1.5, -1.9, -5]}
           rotation={[20.15, -80.05, 0.09]}
           ref={lobsterRef}
+          onCollisionEnter={collisionEnter}
 
           // scale={0.9}
         >
@@ -180,7 +217,7 @@ export default function Kitchen(props) {
             position={[0.38, 0.2, 0.5]}
             args={[1, 0.79]}
             rotation={[-8, -79.2, 28.5]}
-            mass={1}
+            mass={5}
           />
 
           <primitive
@@ -192,7 +229,6 @@ export default function Kitchen(props) {
             scale={0.5}
           />
         </RigidBody>
-
         <Text3D
           className="upDownButton"
           font="./fonts/Inconsolata_Regular.json"
@@ -240,7 +276,6 @@ export default function Kitchen(props) {
           DOWN
           <meshStandardMaterial metalness={0.2} roughness={0} color={"black"} />
         </Text3D>
-
         <mesh position={[-1.9, 0, -1.9]} rotation={[0, 0, 0]} ref={sphere1}>
           <sphereGeometry args={[80, 64, 64]} />
           <meshStandardMaterial map={map} side={THREE.BackSide} />

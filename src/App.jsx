@@ -49,16 +49,16 @@ function App() {
       <header className="game-Header">
         <h1 className="game-Header-Title">LOBSTER FLIGHT SIMULATOR</h1>
         {/* <div className="game-Header-Info"> */}
-        <div className="game-Header-P"> HIT 5 STOCK POTS AND YOU'RE OUT!</div>
+        <div className="game-Header-P"> HIT THE STOCK POT AND YOU'RE OUT!</div>
         {/* <div className="game-Header-P"> WATCH OUT FOR THE STOCK POTS!</div> */}
-        <p className="game-Header-Timer"></p>
-        <div className="game-Header-PanCount">STOCK POT COUNT: {panCount}</div>
+        {/* <p className="game-Header-Timer"></p>
+        <div className="game-Header-PanCount">STOCK POT COUNT: {panCount}</div> */}
 
         {/* </div> */}
       </header>
       <div className="threeD-Container">
         <div className="threeD-Portal">
-          {panCount >= 5 ? (
+          {panCount >= 1 ? (
             <Restart panCount={panCount} setPanCount={setPanCount} />
           ) : (
             <KeyboardControls
@@ -100,6 +100,8 @@ function App() {
                       setView1={setView1}
                       handleButtonUp={handleButtonUp}
                       handleButtonDown={handleButtonDown}
+                      panCount={panCount}
+                      setPanCount={setPanCount}
                     />
                   </Physics>
                 </Suspense>
