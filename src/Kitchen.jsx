@@ -39,7 +39,7 @@ export default function Kitchen(props) {
   const stockpotsRef3 = useRef();
   const { rapier, world } = useRapier();
   const [rotateY, setRotateY] = useState(0);
-  // const [position1, setPosition1] = useState(-1.9);
+
   const sphere1 = useRef();
 
   const box = useRef();
@@ -58,9 +58,6 @@ export default function Kitchen(props) {
 
   useFrame(() => {
     const { forward, backward } = getKeys();
-
-    // if (forward === true) props.handleButtonUp();
-    // if (backward === true) props.handleButtonDown();
 
     if (forward === true) lobsterJump();
     if (backward === true) lobsterDuck();
@@ -81,16 +78,12 @@ export default function Kitchen(props) {
   useFrame((state, delta) => {
     if (!stockpotsRef.current) return;
 
-    // target spin speed (rad/sec) → same as your old 0.22
     const targetSpeed = 0.32;
 
-    // how quickly it accelerates toward target (higher = faster)
     const acceleration = 1.0;
 
-    // get the current angular velocity
     const current = stockpotsRef.current.angvel();
 
-    // smooth step toward target on y-axis
     const newY = THREE.MathUtils.lerp(
       current.y,
       targetSpeed,
@@ -130,7 +123,7 @@ export default function Kitchen(props) {
     const mass = lobsterRef.current.mass();
     const lobsterPosition = lobsterRef.current.translation();
     if (lobsterPosition.y >= -2.5 || lobsterPosition.y <= 0.2) {
-      lobsterRef.current.applyImpulse({ x: 0, y: -0.05 * mass, z: 0 }, false);
+      lobsterRef.current.applyImpulse({ x: 0, y: -0.09 * mass, z: 0 }, false);
     } else
       lobsterRef.current.applyImpulse({ x: 0, y: 0, z: 0 }, false) &&
         lobsterRef.current.resetForces(true);
@@ -169,38 +162,11 @@ export default function Kitchen(props) {
           friction={0.7}
           canSleep={false}
           colliders="trimesh"
-          // type="kinematicPosition"
           ref={stockpotsRef}
           position={[9.25, -2, 9.8]}
         >
-          {/* <CuboidCollider args={[0.3, 0.3, 0.3]} /> */}
-          <primitive
-            // ref={stockpotsRef}
-            // ref={box}
-            object={stockpot.scene}
-            // position={[-0.5, -1.7, -1]}
-            // rotation={[20.15, -80.05, 0.09]}
-            scale={0.3}
-          />
+          <primitive object={stockpot.scene} scale={0.3} />
         </RigidBody>
-        {/* <RigidBody
-          key={"1a"}
-          type="fixed"
-          gravityScale={1}
-          ref={stockpotsRef2}
-          restitution={0}
-          friction={0.7}
-          position={[7.05, -2, 15.8]}
-        >
-          <primitive
-            // ref={stockpotsRef2}
-            object={stockpot.scene}
-            // position={[-0.5, -1.7, -1]}
-            // rotation={[20.15, -80.05, 0.09]}
-
-            scale={0.3}
-          />
-        </RigidBody> */}
 
         <RigidBody
           canSleep={false}
@@ -210,8 +176,6 @@ export default function Kitchen(props) {
           rotation={[20.15, -80.05, 0.09]}
           ref={lobsterRef}
           onCollisionEnter={collisionEnter}
-
-          // scale={0.9}
         >
           <CylinderCollider
             position={[0.38, 0.2, 0.5]}
@@ -221,11 +185,8 @@ export default function Kitchen(props) {
           />
 
           <primitive
-            // ref={lobsterRef}
             object={lobster.scene}
             onClick={toggleDirection}
-            // position={[-1.5, position1, -5]}
-            // rotation={[20.15, -80.05, 0.09]}
             scale={0.5}
           />
         </RigidBody>
@@ -244,9 +205,6 @@ export default function Kitchen(props) {
           rotation-y={0.1}
           rotation-z={0.03}
           position={[0.8, -2.6, -5]}
-          // onClick={(e) => {
-          //   props.handleButtonUp();
-          // }}
           onClick={lobsterJump}
           onPointerOver={() => setHovered(true)}
           onPointerOut={() => setHovered(false)}
