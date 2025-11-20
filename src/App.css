@@ -79,6 +79,7 @@
 
   @media only screen and (max-width: 67.5em) {
     align-items: start;
+  
   }
 }
 
@@ -111,6 +112,12 @@
   align-content: center;
 
   align-items: center;
+
+    @media only screen and (max-width: 57.5em) {
+      
+    width: 100%;
+    padding-top: 3rem;
+  }
 }
 
 .gameOver-Title {
@@ -123,6 +130,16 @@
   margin: 0;
   padding-bottom: 2rem;
   padding-top: 5rem;
+
+      @media only screen and (max-width: 67.5em) {
+        padding-top: 1rem;
+  font-size: 3rem;
+  }
+
+    @media only screen and (max-width: 57.5em) {
+      
+  font-size: 2.3rem;
+  }
 }
 
 .gameOver-Button {
