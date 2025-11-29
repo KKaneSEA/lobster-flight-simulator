@@ -106,31 +106,37 @@ export default function Kitchen(props) {
     }
   }, [lobsterRef.current]);
 
-  const lobsterJump = () => {
-    const mass = lobsterRef.current.mass();
-    const lobsterPosition = lobsterRef.current.translation();
-    console.log(lobsterPosition.y);
-    if (lobsterPosition.y >= -2.5 || lobsterPosition.y <= 0.2) {
-      lobsterRef.current.applyImpulse({ x: 0, y: 0.09 * mass, z: 0 }, false);
-    } else
-      lobsterRef.current.applyImpulse({ x: 0, y: 0, z: 0 }, false) &&
-        lobsterRef.current.resetForces(true);
 
-    console.log(lobsterRef.current);
-  };
+const MIN_Y = -2.25; 
+const MAX_Y = -1.69;  
 
-  const lobsterDuck = (evt) => {
-    const mass = lobsterRef.current.mass();
-    const lobsterPosition = lobsterRef.current.translation();
-    if (lobsterPosition.y >= -2.5 || lobsterPosition.y <= 0.2) {
-      lobsterRef.current.applyImpulse({ x: 0, y: -0.09 * mass, z: 0 }, false);
-    } else
-      lobsterRef.current.applyImpulse({ x: 0, y: 0, z: 0 }, false) &&
-        lobsterRef.current.resetForces(true);
-    console.log(lobsterPosition.y);
-    console.log(lobsterRef.current);
-    console.log(stockpotsRef.current);
-  };
+
+const lobsterJump = () => {
+  const body = lobsterRef.current;
+  const mass = body.mass();
+  const y = body.translation().y;
+
+  // If already too high, do nothing
+  if (y >= MAX_Y) return;
+
+  // Stronger upward impulse
+  body.applyImpulse({ x: 0, y: 0.2 * mass, z: 0 }, true);
+};
+
+const lobsterDuck = () => {
+  const body = lobsterRef.current;
+  const mass = body.mass();
+  const y = body.translation().y;
+
+  // If already too low, do nothing
+  if (y <= MIN_Y) return;
+
+  // Stronger downward impulse
+  body.applyImpulse({ x: 0, y: -0.2 * mass, z: 0 }, true);
+};
+
+
+
 
   function toggleDirection() {
     setStateUp(true);
@@ -163,8 +169,10 @@ export default function Kitchen(props) {
           canSleep={false}
           colliders="trimesh"
           ref={stockpotsRef}
-          position={[9.25, -2, 9.8]}
-        >
+          position={[9.25, -2, 9.8]} 
+          linearDamping={5}
+  angularDamping={2}
+       >
           <primitive object={stockpot.scene} scale={0.3} />
         </RigidBody>
 
